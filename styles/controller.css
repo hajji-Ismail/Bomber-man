@@ -11,6 +11,9 @@
   gap: 5px;
   border: 1px #B99470 solid;
   background-color: #FEFAE0;
+  position: absolute;
+  top: 0;
+  margin-top: 2vh;
 }
 
 .controlBtn {
@@ -36,7 +39,11 @@
 .title {
   font-size: clamp(1.5rem, 5vw, 3rem);
   color: rgb(54, 52, 52);
+  
+  animation: animate 2s ease infinite; /* Keeps final state */
+
 }
+
 
 #popup {
   background-color: bisque;
@@ -56,5 +63,32 @@
   font-size: medium;
   font-style: italic;
   z-index: 3;
+}
+
+#btns_container{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-evenly;
+  gap: 5px;
+  width: 100%;
+  height: auto;
+
+}
+
+@keyframes animate  {
+  0% {
+    opacity: 1;
+  
+  }
+  50% {
+ 
+    opacity: 0.8;
+  }
+  100% {
+  
+    opacity: 0.6;
+    
+  }
 }
 
