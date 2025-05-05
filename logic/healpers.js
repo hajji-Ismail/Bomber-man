@@ -251,9 +251,9 @@ export function generate_game_story(source_index, callback = null) {
 
 // handle score:
 export function handleScore(score) {
-  console.log(score , "scoore");
-  let form =document.getElementById("user_score_form")
-  if (form == null ){
+  console.log(score, "scoore");
+  let form = document.getElementById("user_score_form");
+  if (form == null) {
     let score_form = document.createElement("form");
     score_form.setAttribute("id", "user_score_form");
     score_form.innerHTML = `
@@ -263,37 +263,70 @@ export function handleScore(score) {
     document.body.appendChild(score_form);
     let obj = {};
     score_form.addEventListener("submit", async (e) => {
-  
       e.preventDefault();
       var user_name = document.getElementById("user_score_input").value;
       obj.name = user_name;
       obj.score = score;
-   console.log(obj , "obj");
-   
+      console.log(obj, "obj");
+
       try {
         let res = await fetch("http://localhost:5051/api/scores", {
           method: "POST",
           body: JSON.stringify(obj),
         });
         if (!res.ok) {
+          console.log(res);
           let err = {
             code: res.status || 500,
             message: res.statusText || "internal server error",
-          }
-          throw err
+          };
+          throw err;
         }
-        let response = await res.json();
-      
-        score_form.remove()
-        showscores(response , 5)
-      } catch (err) {
-  
+       
+
+        score_form.remove();
+        let seeMoreButton = document.createElement("button");
+        seeMoreButton.textContent = "See the scors board";
+        seeMoreButton.id = "see_more_btn";
+        seeMoreButton.style.padding = "10px 20px";
+        seeMoreButton.style.fontSize = "16px";
+        seeMoreButton.style.border = "none";
+        seeMoreButton.style.borderRadius = "5px";
+        seeMoreButton.style.backgroundColor = "#28a745";
+        seeMoreButton.style.color = "white";
+        seeMoreButton.style.cursor = "pointer";
+        seeMoreButton.style.marginTop = "20px";
+        document.body.append(seeMoreButton);
+
+        seeMoreButton.addEventListener("click", async () => {
+          seeMoreButton.remove();
+          try {
+            let res = await fetch("http://localhost:5051/api/getscors");
+            if (!res.ok) {
+              console.log(res);
+              
+              let err = {
+                
+                
+                code: res.status || 500,
+                message: res.statusText || "internal server error",
+              };
+              throw err;
+            }
+            let response = await res.json();
+            showscores(response, 5);
+          } catch (error) {
+            console.log("hi");
+            
+            renderErrorPage(error);
+          }
         
-        renderErrorPage(err)
+        });
+      } catch (err) {
+        renderErrorPage(err);
       }
     });
   }
- 
 }
 function showscores(data, rowsPerPage = 5) {
   let board = document.createElement("div");
@@ -306,7 +339,7 @@ function showscores(data, rowsPerPage = 5) {
   let thead = document.createElement("thead");
   let headerRow = document.createElement("tr");
 
-  headers.forEach(text => {
+  headers.forEach((text) => {
     let th = document.createElement("th");
     th.textContent = text;
     headerRow.appendChild(th);
@@ -344,9 +377,14 @@ function showscores(data, rowsPerPage = 5) {
 
       const absoluteIndex = start + index + 1;
       let timeOnly = entry.time.split(" ")[1].slice(0, 5);
-      const rowData = [ordinal(absoluteIndex), entry.name, entry.score, timeOnly];
+      const rowData = [
+        ordinal(absoluteIndex),
+        entry.name,
+        entry.score,
+        timeOnly,
+      ];
 
-      rowData.forEach(text => {
+      rowData.forEach((text) => {
         let td = document.createElement("td");
         td.textContent = text;
         row.appendChild(td);
@@ -391,8 +429,8 @@ function showscores(data, rowsPerPage = 5) {
   renderPage(currentPage);
 }
 function renderErrorPage(error_obj) {
-  console.log(error_obj , "245");
-  
+  console.log(error_obj, "245");
+
   document.body.innerHTML = "";
 
   let error_container = document.createElement("div");
@@ -414,7 +452,5 @@ function renderErrorPage(error_obj) {
   // Add reload functionality
   document.getElementById("reloadBtn").onclick = () => location.reload();
 }
-
-
 
 export const getPosition = (element) => element.getBoundingClientRect();

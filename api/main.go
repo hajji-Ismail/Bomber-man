@@ -10,6 +10,7 @@ import (
 func main() {
 	mux := http.NewServeMux()
 	mux.Handle("/api/scores", CorsMiddleware(http.HandlerFunc(handlers.SaveScores)))
+	mux.Handle("/api/getscors", CorsMiddleware(http.HandlerFunc(handlers.GetScores)))
 
 	fmt.Println("server is running on port 8080 >>> http://localhost:5051")
 	http.ListenAndServe(":5051", CorsMiddleware(mux))
